@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>MailUtility.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.utility</a> &gt; <span class="el_source">MailUtility.java</span></div><h1>MailUtility.java</h1><pre class="source lang-java linenums">package com.dimagi.utility;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.AuthenticationFailedException;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import org.apache.commons.io.FileUtils;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class sendMail.
+ */
+<span class="nc" id="L30">public class MailUtility {</span>
+
+	public static String userName;
+
+	public static String password ;
+
+	public static String emailTo ;
+
+	public static String emailToCC ;
+
+	public static String starttls ;
+
+	public static String host ;
+
+	public static String port ;
+
+<span class="fc" id="L46">	public static Properties prop = new Properties();</span>
+
+	public static String socketFactoryClass ;
+
+	public static String fallback ;
+
+	public static String path;
+
+	public static String moduleName;
+	
+	public static String subject;
+
+<span class="fc" id="L58">	public static int indexOfComma = 0;</span>
+
+	public static String userFullName ;
+	
+	public static String htmlFileName;
+	
+	public static String reportUrl;
+	
+<span class="fc" id="L66">	public static String body=&quot;&quot;;</span>
+
+<span class="fc" id="L68">	public static boolean flag=true;</span>
+	
+<span class="fc" id="L70">	public static String EMAIL_REGEX = &quot;[a-z0-9\\_\\-\\.]+@[a-z0-9\\_\\-\\.]+\\.[a-z]+&quot;;</span>
+
+	/**
+	 * Send email to client.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	public static void sendEmailToClient() throws Exception {
+		
+		/**
+		 * Reading Mail essential 
+		 * data from Mail Properties
+		 * file 
+		 */
+		
+<span class="fc" id="L86">		userName=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;SenderEmailId&quot;);</span>
+	
+<span class="fc" id="L88">		password= PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;Password&quot;);</span>
+
+<span class="fc" id="L90">		emailTo=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;EmailTo&quot;);</span>
+
+<span class="fc" id="L92">		emailToCC=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;EmailToCC&quot;);</span>
+
+<span class="fc" id="L94">		subject=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;Subject&quot;);</span>
+	
+<span class="fc" id="L96">		host=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;Host&quot;);</span>
+	
+<span class="fc" id="L98">		port=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;Port&quot;);</span>
+
+<span class="fc" id="L100">		starttls=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;Starttls&quot;);</span>
+	
+<span class="fc" id="L102">		socketFactoryClass=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;SocketFactoryClass&quot;);</span>
+	
+<span class="fc" id="L104">		fallback=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;Fallback&quot;);</span>
+
+<span class="fc" id="L106">		userFullName=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;)+ &quot;\\Resources\\Mail.properties&quot;, &quot;UserName&quot;);</span>
+		
+<span class="fc" id="L108">		htmlFileName=System.getProperty(&quot;user.dir&quot;) + PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Mail.properties&quot;, &quot;HtmlFileName&quot;);</span>
+
+<span class="fc" id="L110">		reportUrl=PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Mail.properties&quot;, &quot;ReportUrl&quot;);</span>
+		
+<span class="fc" id="L112">		System.out.println(htmlFileName);</span>
+<span class="fc" id="L113">		Properties props = System.getProperties();</span>
+		
+		/**	
+		 * Default user name for SMTP.
+		 * @Return Type:String
+		 * 
+		 */
+<span class="fc" id="L120">		props.put(&quot;mail.smtp.user&quot;, userName);</span>
+		
+		
+		/**	
+		 * The SMTP server to connect to.
+		 * @Return Type:String
+		 * 
+		 */
+<span class="fc" id="L128">		props.put(&quot;mail.smtp.host&quot;, host);</span>
+		
+		
+		/**
+		 * If true, attempt to authenticate the user using the AUTH command. 
+		 * Defaults to false
+		 * @Return Type:boolean
+		 */
+<span class="fc" id="L136">		props.put(&quot;mail.smtp.auth&quot;, &quot;true&quot;);</span>
+
+
+		/**
+		 * The SMTP server port to connect to, 
+		 * if the connect() method doesn't explicitly specify one. 
+		 * Defaults to 25
+		 * 
+		 * @Return Type:int
+		 * 
+		 */
+		
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">		if (!&quot;&quot;.equals(port)) {</span>
+<span class="fc" id="L149">			props.put(&quot;mail.smtp.port&quot;, port);</span>
+<span class="fc" id="L150">			props.put(&quot;mail.smtp.socketFactory.port&quot;, port);</span>
+		}
+
+		/**
+		 * If true, enables the use of the STARTTLS command 
+		 *  to switch the connection to a TLS-protected connection 
+		 *  before issuing any login commands. 
+		 *  Defaults to false.
+		 *  
+		 *  @Return Type:boolean
+		 *  
+		 */
+		
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">		if (!&quot;&quot;.equals(starttls))</span>
+<span class="fc" id="L164">			props.put(&quot;mail.smtp.starttls.enable&quot;, starttls);</span>
+
+		/**
+		 * 	If set, specifies the name of a class
+		 *  that implements the javax.net.SocketFactory interface. 
+		 *  This class will be used to create SMTP sockets.
+		 *  
+		 *  @Return Type:String
+		 */
+		
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">		if (!&quot;&quot;.equals(socketFactoryClass))</span>
+<span class="fc" id="L175">			props.put(&quot;mail.smtp.socketFactory.class&quot;, socketFactoryClass);</span>
+
+		/**	
+		 * If set to true, failure to create a socket 
+		 * using the specified socket factory class 
+		 * will cause the socket to be created using the
+		 * java.net.Socket class. 
+		 * Defaults to true.
+		 * 
+		 * @Return Type:boolean
+		 * 
+		 */
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">		if (!&quot;&quot;.equals(fallback))</span>
+<span class="fc" id="L188">			props.put(&quot;mail.smtp.socketFactory.fallback&quot;, fallback);</span>
+
+<span class="fc" id="L190">		Session session = Session.getDefaultInstance(props, null);</span>
+<span class="fc" id="L191">		session.setDebug(false);</span>
+
+		try {
+
+<span class="fc" id="L195">			Message msg = new MimeMessage(session);</span>
+<span class="fc" id="L196">			msg.setFrom(new InternetAddress(userName,prop.getProperty(userFullName)));</span>
+<span class="fc" id="L197">			msg.setSubject(subject);</span>
+
+
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">			if (emailTo.contains(&quot;,&quot;)) {</span>
+<span class="nc" id="L201">				String[] multipleEmailTo = emailTo.split(&quot;,&quot;);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">				for (int j = 0; j &lt; multipleEmailTo.length; j++) {</span>
+<span class="nc" id="L203">					msg.addRecipient(Message.RecipientType.TO, new InternetAddress(multipleEmailTo[j]));</span>
+				}
+
+<span class="nc" id="L206">			} else {</span>
+<span class="fc" id="L207">				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(emailTo));</span>
+			}
+
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">			if (!&quot;&quot;.equals(emailToCC)) {</span>
+
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">				if (emailToCC.contains(&quot;,&quot;)) {</span>
+<span class="nc" id="L213">					String[] multipleEmailTo = emailToCC.split(&quot;,&quot;);</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">					for (int j = 0; j &lt; multipleEmailTo.length; j++) {</span>
+<span class="nc" id="L215">						msg.addRecipient(Message.RecipientType.CC, new InternetAddress(multipleEmailTo[j]));</span>
+					}
+
+<span class="nc" id="L218">				} else {</span>
+<span class="fc" id="L219">					msg.addRecipient(Message.RecipientType.CC, new InternetAddress(emailToCC));</span>
+				}
+			}
+		
+			
+			
+<span class="fc" id="L225">				BufferedReader in = new BufferedReader(new FileReader(htmlFileName));</span>
+				String str;
+<span class="fc bfc" id="L227" title="All 2 branches covered.">				while ((str = in.readLine()) != null) {</span>
+<span class="fc" id="L228">					body +=str;</span>
+				}
+				
+				/**
+				 * Reading URL of the Output Report of Test Execution
+				 *  from Properties file for
+				 * drafting the email body to be sent
+				 * 
+				 */
+<span class="fc" id="L237">				System.out.println(password);</span>
+<span class="fc" id="L238">				body = body.replace(&quot;{Url}&quot;, reportUrl);</span>
+<span class="fc" id="L239">				in.close();</span>
+
+						
+<span class="fc" id="L242">			BodyPart messageBodyPart = new MimeBodyPart();</span>
+
+/*			messageBodyPart.setText(
+					&quot;Hi Nick,\n\nGreetings for the day!\n\nPlease find attached the Test Execution Result for Dimagi .\n\n\nThanks &amp; Regards\nTesingXperts&quot;);
+
+			Multipart multipart = new MimeMultipart();
+			multipart.addBodyPart(messageBodyPart);
+*/
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">			if (body.contains(&quot;&lt;body&gt;&quot;))</span>
+<span class="fc" id="L251">				messageBodyPart.setContent(body, &quot;text/html&quot;);</span>
+			
+			else
+<span class="nc" id="L254">			messageBodyPart.setText(body);</span>
+<span class="fc" id="L255">			Multipart multipart = new MimeMultipart();</span>
+<span class="fc" id="L256">			multipart.addBodyPart(messageBodyPart);</span>
+
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">			if(flag)</span>
+			{
+<span class="fc" id="L260">			messageBodyPart = new MimeBodyPart();</span>
+<span class="fc" id="L261">			String path = System.getProperty(&quot;user.dir&quot;) + &quot;/ExecutionResult.zip&quot;;</span>
+<span class="fc" id="L262">			DataSource source = new FileDataSource(path);</span>
+<span class="fc" id="L263">			messageBodyPart.setDataHandler(new DataHandler(source));</span>
+<span class="fc" id="L264">			messageBodyPart.setFileName(&quot;ExecutionResult.zip&quot;);</span>
+<span class="fc" id="L265">			multipart.addBodyPart(messageBodyPart);</span>
+		
+			}
+<span class="fc" id="L268">			msg.setContent(multipart);</span>
+<span class="fc" id="L269">			Transport transport = session.getTransport(&quot;smtp&quot;);</span>
+<span class="fc" id="L270">			transport.connect(host, userName, password);</span>
+<span class="fc" id="L271">			transport.sendMessage(msg, msg.getAllRecipients());</span>
+<span class="fc" id="L272">			transport.close();</span>
+<span class="fc" id="L273">			System.out.println(&quot;Mail Sent successfully&quot;);</span>
+
+		 
+<span class="fc" id="L276">		}</span>
+		
+<span class="nc" id="L278">		catch (IOException e) {</span>
+<span class="nc" id="L279">			e.getMessage();</span>
+		}
+		
+<span class="nc" id="L282">		catch (AuthenticationFailedException e1) {</span>
+<span class="nc" id="L283">			JFrame wrongCredentials = new JFrame();</span>
+<span class="nc" id="L284">			JOptionPane.showMessageDialog(wrongCredentials, &quot;Wrong Username or Password&quot;);</span>
+		} 
+		
+<span class="nc" id="L287">		catch (Exception e) {</span>
+<span class="nc" id="L288">			e.printStackTrace();</span>
+		}
+<span class="fc" id="L290">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

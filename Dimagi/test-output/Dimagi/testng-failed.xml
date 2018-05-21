@@ -8,7 +8,6 @@
           <include name="getResult"/>
           <include name="endReport"/>
           <include name="afterTest"/>
-          <include name="tearDown"/>
           <include name="initiateBrowser"/>
           <include name="deliberateFail"/>
           <include name="load_parameters"/>

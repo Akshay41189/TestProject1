@@ -219,8 +219,7 @@ public class MailUtility {
 					msg.addRecipient(Message.RecipientType.CC, new InternetAddress(emailToCC));
 				}
 			}
-			
-			System.out.println(userFullName);
+		
 			
 			
 				BufferedReader in = new BufferedReader(new FileReader(htmlFileName));
@@ -239,9 +238,7 @@ public class MailUtility {
 				body = body.replace("{Url}", reportUrl);
 				in.close();
 
-				System.out.println(body+"Dead Code");
-				
-			
+						
 			BodyPart messageBodyPart = new MimeBodyPart();
 
 /*			messageBodyPart.setText(

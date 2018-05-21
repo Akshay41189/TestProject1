@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PropertiesUtility.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.utility</a> &gt; <span class="el_source">PropertiesUtility.java</span></div><h1>PropertiesUtility.java</h1><pre class="source lang-java linenums">package com.dimagi.utility;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.testng.Reporter;
+
+/**
+ * &lt;h1&gt;PropertiesUtility class&lt;/h1&gt; &lt;br&gt;
+ * Utility Class for Properties &lt;br&gt;
+ * &lt;br&gt;
+ * .
+ *
+ * @author Deeksha Sethi
+ * @version 1.0 &lt;br&gt;
+ *          &lt;br&gt;
+ */
+<span class="nc" id="L21">public class PropertiesUtility {</span>
+
+	/** The prop-creates Properties object*/
+	static Properties prop;
+	
+	/** The fis-creates FileInputStream object */
+	static FileInputStream fis;
+	
+	/** The fos-creates FileOutputStream object */
+	static FileOutputStream fos;
+
+	/** The string prop data. */
+	static String stringPropData;
+	
+	/** The long prop data. */
+	static long longPropData;
+	
+	/** The int prop data. */
+	static int intPropData;
+
+	/**
+	 * This function reads String data from a Properties file. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi  &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param propFilePath            - Name of the properties file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param propKey            - Key of the value to be extracted. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @return String value read from the properties file. &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @category Utility Class for Properties
+	 */
+	public static String readStringFromProperties(String propFilePath, String propKey) {
+
+<span class="fc" id="L59">		prop = new Properties();</span>
+		try {
+
+			// initialize the FileInputStream object
+<span class="fc" id="L63">			fis = new FileInputStream(propFilePath);</span>
+
+			// load the properties from the FileInputStream
+<span class="fc" id="L66">			prop.load(fis);</span>
+
+			// catches Exception if the properties file is not found
+<span class="pc" id="L69">		} catch (FileNotFoundException e) {</span>
+
+<span class="nc" id="L71">			System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L73">			Reporter.log(&quot;Properties File not Found&quot;);</span>
+
+			// catches Exception if I/O operation not performed on the
+			// properties file
+<span class="nc" id="L77">		} catch (IOException e) {</span>
+
+<span class="nc" id="L79">			System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L81">			Reporter.log(&quot;Properties File Data Read Failed&quot;);</span>
+
+		}
+
+		// reads the value of the key from the properties file
+<span class="fc" id="L86">		stringPropData = prop.getProperty(propKey);</span>
+
+<span class="fc" id="L88">		Reporter.log(&quot;Properties File Data Read Successful&quot;);</span>
+
+<span class="fc" id="L90">		return stringPropData;</span>
+	}
+
+	/**
+	 * This function reads long data from a Properties file. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param propFilePath            - Name of the properties file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param propKey            - Key of the value to be extracted. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @return long value read from the properties file. &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @category Utility Class for Properties
+	 */
+	public static long readLongFromProperties(String propFilePath, String propKey) {
+
+<span class="fc" id="L111">		prop = new Properties();</span>
+		try {
+
+<span class="fc" id="L114">			fis = new FileInputStream(propFilePath);</span>
+<span class="fc" id="L115">			prop.load(fis);</span>
+
+<span class="pc" id="L117">		} catch (FileNotFoundException e) {</span>
+
+<span class="nc" id="L119">			System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L121">			Reporter.log(&quot;Properties File not Found&quot;);</span>
+
+<span class="nc" id="L123">		} catch (IOException e) {</span>
+
+<span class="nc" id="L125">			System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L127">			Reporter.log(&quot;Properties File Data Read Failed&quot;);</span>
+
+		}
+
+		// convert String data to long
+<span class="fc" id="L132">		longPropData = Long.parseLong(prop.getProperty(propKey));</span>
+
+<span class="fc" id="L134">		Reporter.log(&quot;Properties File Data Read Successful&quot;);</span>
+
+<span class="fc" id="L136">		return longPropData;</span>
+	}
+
+	/**
+	 * This function reads int data from a Properties file. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param propFilePath            - Name of the properties file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param propKey            - Key of the value to be extracted. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @return int value read from the properties file. &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @category Utility Class for Properties
+	 */
+	public static int readIntFromProperties(String propFilePath, String propKey) {
+
+<span class="fc" id="L157">		prop = new Properties();</span>
+		try {
+
+<span class="fc" id="L160">			fis = new FileInputStream(propFilePath);</span>
+<span class="fc" id="L161">			prop.load(fis);</span>
+
+<span class="pc" id="L163">		} catch (FileNotFoundException e) {</span>
+
+<span class="nc" id="L165">			System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L167">			Reporter.log(&quot;Properties File not Found&quot;);</span>
+
+<span class="nc" id="L169">		} catch (IOException e) {</span>
+
+<span class="nc" id="L171">			System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L173">			Reporter.log(&quot;Properties File Data Read Failed&quot;);</span>
+
+		}
+
+		// convert String data to int
+<span class="fc" id="L178">		intPropData = Integer.parseInt(prop.getProperty(propKey));</span>
+
+<span class="fc" id="L180">		Reporter.log(&quot;Properties File Data Read Successful&quot;);</span>
+
+<span class="fc" id="L182">		return intPropData;</span>
+	}
+
+	/**
+	 * This function appends String data to a Properties file. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param propFilePath            - Name of the properties file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param propKey            - Key of the value to be appended. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param propValue            - Value of the key to be appended. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @category Utility Class for Properties
+	 */
+	public static void appendStringProperties(String propFilePath, String propKey, String propValue) {
+
+		// initialize the Properties object
+<span class="nc" id="L204">		prop = new Properties();</span>
+
+		try {
+
+			// initialize the FileOutputStream object
+			// open the properties file in appned mode
+<span class="nc" id="L210">			fos = new FileOutputStream(propFilePath, true);</span>
+
+<span class="nc" id="L212">			prop.setProperty(propKey, propValue);</span>
+
+			// save properties to project root folder
+<span class="nc" id="L215">			prop.store(fos, null);</span>
+
+			// catches Exception if the I/O operation fails
+<span class="nc" id="L218">		} catch (IOException e) {</span>
+
+<span class="nc" id="L220">			System.out.println(e.getMessage());</span>
+
+		} finally {
+
+<span class="nc bnc" id="L224" title="All 2 branches missed.">			if (fos != null) {</span>
+
+				try {
+
+					// close the FileOutputStream
+<span class="nc" id="L229">					fos.close();</span>
+
+<span class="nc" id="L231">					Reporter.log(&quot;Properties File not Appended&quot;);</span>
+
+					// catches the Exception if the FileOutputStream not closed
+<span class="nc" id="L234">				} catch (IOException e) {</span>
+
+<span class="nc" id="L236">					System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L238">					Reporter.log(&quot;Properties File Appended&quot;);</span>
+
+				}
+			}
+		}
+<span class="nc" id="L243">	}</span>
+
+	/**
+	 * This function writes String data to a Properties file after truncating
+	 * the existing data. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param propFilePath            - Name of the properties file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param propKey            - Key of the value to be appended. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param propValue            - Value of the key to be appended. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @category Utility Class for Properties
+	 */
+	public static void writeToProperties(String propFilePath, String propKey, String propValue) {
+
+<span class="nc" id="L264">		prop = new Properties();</span>
+
+		try {
+
+			// open the properties file in write mode
+<span class="nc" id="L269">			fos = new FileOutputStream(propFilePath);</span>
+
+<span class="nc" id="L271">			prop.setProperty(propKey, propValue);</span>
+
+<span class="nc" id="L273">			prop.store(fos, null);</span>
+
+<span class="nc" id="L275">		} catch (IOException e) {</span>
+
+<span class="nc" id="L277">			System.out.println(e.getMessage());</span>
+
+		} finally {
+
+<span class="nc bnc" id="L281" title="All 2 branches missed.">			if (fos != null) {</span>
+
+				try {
+
+<span class="nc" id="L285">					fos.close();</span>
+
+<span class="nc" id="L287">					Reporter.log(&quot;Properties File not Appended&quot;);</span>
+
+<span class="nc" id="L289">				} catch (IOException e) {</span>
+
+<span class="nc" id="L291">					System.out.println(e.getMessage());</span>
+
+<span class="nc" id="L293">					Reporter.log(&quot;Properties File Appended&quot;);</span>
+
+				}
+			}
+		}
+<span class="nc" id="L298">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

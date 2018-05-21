@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>AdminLogin.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.tests</a> &gt; <span class="el_source">AdminLogin.java</span></div><h1>AdminLogin.java</h1><pre class="source lang-java linenums">package com.dimagi.tests;
+
+import java.io.IOException;
+
+import org.testng.annotations.Test;
+
+import com.dimagi.applicationutility.AppUtility;
+import com.dimagi.locators.Locators;
+import com.dimagi.utility.ExcelUtility;
+import com.dimagi.utility.FunctionUtility;
+import com.dimagi.utility.PropertiesUtility;
+import com.relevantcodes.extentreports.LogStatus;
+
+<span class="nc" id="L14">public class AdminLogin extends FunctionUtility{</span>
+	
+	
+	/** The this class. */
+	@SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L19">	static Class thisClass = AdminLogin.class;</span>
+	
+	
+	/** The test case ID. */
+<span class="nc" id="L23">	static String testCaseID = thisClass.getSimpleName();</span>
+	
+	@Test
+	public void loginAsAdmin() throws Exception 
+	{
+		
+		/**
+		 * Taking Class name in the testCaseID 
+		 * &amp; passing the parameter in the extent report
+		 * along with the description by calling extent report 
+		 * methods of Functions Utility Class
+		 * 
+		 */
+		
+<span class="nc" id="L37">		FunctionUtility.className=testCaseID;</span>
+<span class="nc" id="L38">		logger = extent.startTest(testCaseID);</span>
+<span class="nc" id="L39">		logger.setDescription(&quot;This Test method is used to login ICDS-CAS Application &quot;);</span>
+<span class="nc" id="L40">		logger.getDescription();</span>
+		
+		
+<span class="nc" id="L43">		String userName=ExcelUtility.readFromExcel(</span>
+<span class="nc" id="L44">				System.getProperty(&quot;user.dir&quot;) + PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;ExcelInputFilePath&quot;), &quot;Login&quot;, 2, 1);</span>
+		
+<span class="nc" id="L46">		Thread.sleep(2000);</span>
+		
+<span class="nc" id="L48">		String password=ExcelUtility.readFromExcel(</span>
+<span class="nc" id="L49">				System.getProperty(&quot;user.dir&quot;) + PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;ExcelInputFilePath&quot;), &quot;Login&quot;, 2, 2);</span>
+		
+<span class="nc" id="L51">		Thread.sleep(2000);</span>
+	
+		/**
+		 * AppUtility includes Application specific
+		 * functions &amp; calling login function from the 
+		 * same Class
+		 * ***********
+		 */
+		
+<span class="nc" id="L60">		AppUtility.login(userName,password,&quot;Login with valid credentials&quot;);</span>
+		
+		/**
+		 * Writing Output result 
+		 * into Extent Report
+		 * 
+		 */
+<span class="nc" id="L67">		logger.log(LogStatus.PASS, passStringGreenColor(&quot;Test to login into the Application as an Admin is working fine&quot;));</span>
+<span class="nc" id="L68">	}</span>
+	
+	
+	
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

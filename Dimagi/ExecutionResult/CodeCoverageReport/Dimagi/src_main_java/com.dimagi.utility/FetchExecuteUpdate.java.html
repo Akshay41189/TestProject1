@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>FetchExecuteUpdate.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.utility</a> &gt; <span class="el_source">FetchExecuteUpdate.java</span></div><h1>FetchExecuteUpdate.java</h1><pre class="source lang-java linenums">package com.dimagi.utility;
+
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.entity.StringEntity;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import com.thed.zephyr.cloud.rest.ZFJCloudRestClient;
+import com.thed.zephyr.cloud.rest.client.JwtGenerator;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+<span class="nc" id="L27">public class FetchExecuteUpdate {</span>
+
+	
+
+<span class="nc" id="L31">	private static String API_SEARCH_ISSUES = &quot;{SERVER}/rest/api/2/search&quot;;</span>
+<span class="nc" id="L32">	private static String API_ADD_TESTS = &quot;{SERVER}/public/rest/api/1.0/executions/add/cycle/&quot;;</span>
+<span class="nc" id="L33">	private static String API_GET_EXECUTIONS = &quot;{SERVER}/public/rest/api/1.0/executions/search/cycle/&quot;;</span>
+<span class="nc" id="L34">	private static String API_UPDATE_EXECUTION = &quot;{SERVER}/public/rest/api/1.0/execution/&quot;;</span>
+
+	/** Declare JIRA,Zephyr URL,access and secret Keys */
+
+	/* JIRA Cloud URL of the instance*/
+<span class="nc" id="L39">	private static String jiraBaseURL = &quot;https://testingxpert.atlassian.net&quot;;</span>
+	/* Replace zephyr baseurl &lt;ZAPI_Cloud_URL&gt; shared with the user for ZAPI Cloud Installation*/
+<span class="nc" id="L41">	private static String zephyrBaseUrl = &quot;https://prod-api.zephyr4jiracloud.com/connect&quot;;</span>
+	/* zephyr accessKey ,Go to settings then Ad-ons then ZAPI*/
+<span class="nc" id="L43">	private static String accessKey = &quot;YmQ2YjBjM2YtMmEwZS0zNGRjLTllYTgtMWEzYmY4Mjg3NGNjIHRlc3Rpbmd4cGVydHMxMSBVU0VSX0RFRkFVTFRfTkFNRQ&quot;;</span>
+	/* zephyr accessKey ,Go to settings then Ad-ons then ZAPI*/
+<span class="nc" id="L45">	private static String secretKey = &quot;_EXll5mjUioRbceX1vqhQBJAKnuLqa7lm-93-wh-a6Y&quot;;</span>
+
+	/** Declare parameter values here */
+<span class="nc" id="L48">	private static String userName = &quot;testingxperts11@gmail.com&quot;;</span>
+<span class="nc" id="L49">	private static String password = &quot;Damco@123&quot;;</span>
+
+	/*After creating Test cycle inspect Test Case Cycle created an element: &lt;li id =&quot;cycle-0001503993710547-242ac112-0001&quot;&gt;*/
+<span class="nc" id="L52">	private static String cycleId = &quot;0001525183887463-242ac112-0001&quot;;</span>
+<span class="nc" id="L53">	private static String versionId = &quot;-1&quot;;</span>
+
+	/*Go to settings then Project ,hover the mouse on it will give Project id at the bottom*/
+<span class="nc" id="L56">	private static String projectId = &quot;10001&quot;; </span>
+
+<span class="nc" id="L58">	static ZFJCloudRestClient client = ZFJCloudRestClient.restBuilder(zephyrBaseUrl, accessKey, secretKey, userName)</span>
+<span class="nc" id="L59">			.build();</span>
+<span class="nc" id="L60">	JwtGenerator jwtGenerator = client.getJwtGenerator();</span>
+
+	public static void main(String[] args) throws JSONException, URISyntaxException,IOException {
+
+<span class="nc" id="L64">		final String issueSearchUri = API_SEARCH_ISSUES.replace(&quot;{SERVER}&quot;, jiraBaseURL);</span>
+
+<span class="nc" id="L66">		Map&lt;String, String&gt; executionIds = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L67">		final String getExecutionsUri = API_GET_EXECUTIONS.replace(&quot;{SERVER}&quot;, zephyrBaseUrl) + cycleId + &quot;?projectId=&quot;</span>
+<span class="nc" id="L68">				+ projectId + &quot;&amp;versionId=&quot; + versionId;</span>
+
+<span class="nc" id="L70">		executionIds = getExecutionsByCycleId(getExecutionsUri, client, accessKey);</span>
+
+		/**
+		 * Bulk Update Executions with Status by Execution Id
+		 * 
+		 */
+
+<span class="nc" id="L77">		JSONObject statusObj = new JSONObject();</span>
+		//id = 1 --&gt; pass
+		//id = 2 --&gt; fail
+
+<span class="nc" id="L81">		statusObj.put(&quot;id&quot;, &quot;1&quot;);</span>
+
+<span class="nc" id="L83">		JSONObject executeTestsObj = new JSONObject();</span>
+<span class="nc" id="L84">		executeTestsObj.put(&quot;status&quot;, statusObj);</span>
+<span class="nc" id="L85">		executeTestsObj.put(&quot;cycleId&quot;, cycleId);</span>
+<span class="nc" id="L86">		executeTestsObj.put(&quot;projectId&quot;, projectId);</span>
+<span class="nc" id="L87">		executeTestsObj.put(&quot;versionId&quot;, versionId);</span>
+<span class="nc" id="L88">		executeTestsObj.put(&quot;comment&quot;, &quot;Executed by ZAPI Cloud&quot;);</span>
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">		for (String key : executionIds.keySet()) {</span>
+<span class="nc" id="L91">			final String updateExecutionUri = API_UPDATE_EXECUTION.replace(&quot;{SERVER}&quot;, zephyrBaseUrl) + key;</span>
+			// System.out.println(updateExecutionUri);
+			// System.out.println(executionIds.get(key));
+<span class="nc" id="L94">			executeTestsObj.put(&quot;issueId&quot;, executionIds.get(key));</span>
+			// System.out.println(executeTestsObj.toString());
+<span class="nc" id="L96">			StringEntity executeTestsJSON = null;</span>
+			try {
+<span class="nc" id="L98">				executeTestsJSON = new StringEntity(executeTestsObj.toString());</span>
+<span class="nc" id="L99">			} catch (UnsupportedEncodingException e1) {</span>
+<span class="nc" id="L100">				e1.printStackTrace();</span>
+			}
+<span class="nc" id="L102">			updateExecutions(updateExecutionUri, client, accessKey, executeTestsJSON);</span>
+		}
+
+<span class="nc" id="L105">	}</span>
+
+	private static Map&lt;String, String&gt; getExecutionsByCycleId(String uriStr, ZFJCloudRestClient client,
+			String accessKey) throws URISyntaxException, JSONException {
+<span class="nc" id="L109">		Map&lt;String, String&gt; executionIds = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L110">		URI uri = new URI(uriStr);</span>
+<span class="nc" id="L111">		int expirationInSec = 360;</span>
+<span class="nc" id="L112">		JwtGenerator jwtGenerator = client.getJwtGenerator();</span>
+<span class="nc" id="L113">		String jwt = jwtGenerator.generateJWT(&quot;GET&quot;, uri, expirationInSec);</span>
+		// System.out.println(uri.toString());
+		// System.out.println(jwt);
+
+<span class="nc" id="L117">		HttpResponse response = null;</span>
+<span class="nc" id="L118">		HttpClient restClient = new DefaultHttpClient();</span>
+<span class="nc" id="L119">		HttpGet httpGet = new HttpGet(uri);</span>
+<span class="nc" id="L120">		httpGet.setHeader(&quot;Authorization&quot;, jwt);</span>
+<span class="nc" id="L121">		httpGet.setHeader(&quot;zapiAccessKey&quot;, accessKey);</span>
+
+		try {
+<span class="nc" id="L124">			response = restClient.execute(httpGet);</span>
+<span class="nc" id="L125">		} catch (ClientProtocolException e1) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L127">			e1.printStackTrace();</span>
+<span class="nc" id="L128">		} catch (IOException e1) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L130">			e1.printStackTrace();</span>
+		}
+
+<span class="nc" id="L133">		int statusCode = response.getStatusLine().getStatusCode();</span>
+		// System.out.println(statusCode);
+
+<span class="nc bnc" id="L136" title="All 4 branches missed.">		if (statusCode &gt;= 200 &amp;&amp; statusCode &lt; 300) {</span>
+<span class="nc" id="L137">			HttpEntity entity1 = response.getEntity();</span>
+<span class="nc" id="L138">			String string1 = null;</span>
+			try {
+<span class="nc" id="L140">				string1 = EntityUtils.toString(entity1);</span>
+<span class="nc" id="L141">			}catch (IOException e) {</span>
+<span class="nc" id="L142">				e.printStackTrace();</span>
+			}
+
+			// System.out.println(string1);
+<span class="nc" id="L146">			JSONObject allIssues = new JSONObject(string1);</span>
+<span class="nc" id="L147">			JSONArray IssuesArray = allIssues.getJSONArray(&quot;searchObjectList&quot;);</span>
+			// System.out.println(IssuesArray.length());
+<span class="nc bnc" id="L149" title="All 2 branches missed.">			if (IssuesArray.length() == 0) {</span>
+<span class="nc" id="L150">				return executionIds;</span>
+			}
+<span class="nc bnc" id="L152" title="All 2 branches missed.">			for (int j = 0; j &lt;= IssuesArray.length() - 1; j++) {</span>
+<span class="nc" id="L153">				JSONObject jobj = IssuesArray.getJSONObject(j);</span>
+<span class="nc" id="L154">				JSONObject jobj2 = jobj.getJSONObject(&quot;execution&quot;);</span>
+<span class="nc" id="L155">				String executionId = jobj2.getString(&quot;id&quot;);</span>
+<span class="nc" id="L156">				long IssueId = jobj2.getLong(&quot;issueId&quot;);</span>
+<span class="nc" id="L157">				executionIds.put(executionId, String.valueOf(IssueId));</span>
+			}
+		}
+<span class="nc" id="L160">		return executionIds;</span>
+	}
+	public static String updateExecutions(String uriStr, ZFJCloudRestClient client, String accessKey,
+			StringEntity executionJSON) throws URISyntaxException, JSONException, IOException {
+
+<span class="nc" id="L165">		URI uri = new URI(uriStr);</span>
+<span class="nc" id="L166">		int expirationInSec = 360;</span>
+<span class="nc" id="L167">		JwtGenerator jwtGenerator = client.getJwtGenerator();</span>
+<span class="nc" id="L168">		String jwt = jwtGenerator.generateJWT(&quot;PUT&quot;, uri, expirationInSec);</span>
+		// System.out.println(uri.toString());
+		// System.out.println(jwt);
+
+<span class="nc" id="L172">		HttpResponse response = null;</span>
+<span class="nc" id="L173">		HttpClient restClient = new DefaultHttpClient();</span>
+
+<span class="nc" id="L175">		HttpPut executeTest = new HttpPut(uri);</span>
+<span class="nc" id="L176">		executeTest.addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L177">		executeTest.addHeader(&quot;Authorization&quot;, jwt);</span>
+<span class="nc" id="L178">		executeTest.addHeader(&quot;zapiAccessKey&quot;, accessKey);</span>
+<span class="nc" id="L179">		executeTest.setEntity(executionJSON);</span>
+
+		try {
+<span class="nc" id="L182">			response = restClient.execute(executeTest);</span>
+<span class="nc" id="L183">		} catch (ClientProtocolException e) {</span>
+<span class="nc" id="L184">			e.printStackTrace();</span>
+<span class="nc" id="L185">		} catch (IOException e) {</span>
+<span class="nc" id="L186">			e.printStackTrace();</span>
+		}
+
+<span class="nc" id="L189">		int statusCode = response.getStatusLine().getStatusCode();</span>
+		// System.out.println(statusCode);
+<span class="nc" id="L191">		String executionStatus = &quot;No Test Executed&quot;;</span>
+		// System.out.println(response.toString());
+<span class="nc" id="L193">		HttpEntity entity = response.getEntity();</span>
+
+<span class="nc bnc" id="L195" title="All 4 branches missed.">		if (statusCode &gt;= 200 &amp;&amp; statusCode &lt; 300) {</span>
+<span class="nc" id="L196">			String string = null;</span>
+			try {
+<span class="nc" id="L198">				string = EntityUtils.toString(entity);</span>
+<span class="nc" id="L199">				JSONObject executionResponseObj = new JSONObject(string);</span>
+<span class="nc" id="L200">				JSONObject descriptionResponseObj = executionResponseObj.getJSONObject(&quot;execution&quot;);</span>
+<span class="nc" id="L201">				JSONObject statusResponseObj = descriptionResponseObj.getJSONObject(&quot;status&quot;);</span>
+<span class="nc" id="L202">				executionStatus = statusResponseObj.getString(&quot;description&quot;);</span>
+<span class="nc" id="L203">				System.out.println(executionResponseObj.get(&quot;issueKey&quot;) + &quot;--&quot; + executionStatus);</span>
+<span class="nc" id="L204">			} catch (IOException e) {</span>
+<span class="nc" id="L205">				e.printStackTrace();</span>
+			}
+
+<span class="nc" id="L208">		} else {</span>
+
+			try {
+<span class="nc" id="L211">				String string = null;</span>
+<span class="nc" id="L212">				string = EntityUtils.toString(entity);</span>
+<span class="nc" id="L213">				JSONObject executionResponseObj = new JSONObject(string);</span>
+<span class="nc" id="L214">				cycleId = executionResponseObj.getString(&quot;clientMessage&quot;);</span>
+				// System.out.println(executionResponseObj.toString());
+<span class="nc" id="L216">				throw new ClientProtocolException(&quot;Unexpected response status: &quot; + statusCode);</span>
+
+<span class="nc" id="L218">			} catch (ClientProtocolException e) {</span>
+<span class="nc" id="L219">				e.printStackTrace();</span>
+			}
+		}
+<span class="nc" id="L222">		return executionStatus;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

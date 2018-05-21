@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ZipExecutionResult.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.utility</a> &gt; <span class="el_source">ZipExecutionResult.java</span></div><h1>ZipExecutionResult.java</h1><pre class="source lang-java linenums">package com.dimagi.utility;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+<span class="nc" id="L13">public class ZipExecutionResult {</span>
+
+<span class="fc" id="L15">static List&lt;String&gt; fileList=new ArrayList&lt;String&gt;();</span>
+	
+	public static void zipOutputResult() throws IOException 
+	{
+<span class="fc" id="L19">		sendToZip(new File(System.getProperty(&quot;user.dir&quot;)+&quot;/ExecutionResult&quot;), new File(System.getProperty(&quot;user.dir&quot;)+&quot;/ExecutionResult.zip&quot;));</span>
+<span class="fc" id="L20">	}</span>
+
+	/*This Method is Created for List down Of All Files
+	 *  within the Source Path and 
+	 *  put the Absolute Path into the List*/
+
+	public static List&lt;String&gt; addFiletoList(File inputDir)
+	{
+<span class="fc" id="L28">		File[] listOfFile=inputDir.listFiles();</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">		for (File file : listOfFile) {</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">			if(file.isFile())</span>
+<span class="fc" id="L31">				fileList.add(file.getAbsolutePath());</span>
+			else
+<span class="fc" id="L33">				addFiletoList(file);</span>
+		}
+<span class="fc" id="L35">		return fileList;     </span>
+	}
+
+	/*	This Method is Created to Zip the all File and 
+	Save it to the Destination Path*/
+
+	private  static void sendToZip(File zipInput,File zipOutPut) throws FileNotFoundException, IOException
+	{   
+<span class="fc" id="L43">		List&lt;String&gt; fileList=new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L44">		fileList=addFiletoList(zipInput);</span>
+<span class="fc" id="L45">		FileOutputStream fos=new FileOutputStream(zipOutPut);</span>
+<span class="fc" id="L46">		ZipOutputStream zos=new ZipOutputStream(fos);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">		for(String filePath:fileList){</span>
+<span class="fc" id="L48">			FileInputStream fis = new FileInputStream(filePath);</span>
+
+			//String name is required for showing the file name after zip same as before zip
+
+<span class="fc" id="L52">			String name = filePath.substring(zipInput.getAbsolutePath().length()+1, filePath.length());</span>
+<span class="fc" id="L53">			ZipEntry entry = new ZipEntry(name);</span>
+<span class="fc" id="L54">			zos.putNextEntry(entry);</span>
+
+			int len;
+<span class="fc" id="L57">			byte[] buffer = new byte[4096];</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">			while ((len = fis.read(buffer)) != -1) {</span>
+<span class="fc" id="L59">				zos.write(buffer, 0, len);</span>
+			}
+
+<span class="fc" id="L62">			fis.close();</span>
+<span class="fc" id="L63">			zos.closeEntry();</span>
+		}
+<span class="fc" id="L65">		zos.close();</span>
+<span class="fc" id="L66">		fos.close();</span>
+<span class="fc" id="L67">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

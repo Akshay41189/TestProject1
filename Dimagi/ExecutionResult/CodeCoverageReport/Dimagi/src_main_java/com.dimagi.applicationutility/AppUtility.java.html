@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>AppUtility.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.applicationutility</a> &gt; <span class="el_source">AppUtility.java</span></div><h1>AppUtility.java</h1><pre class="source lang-java linenums">package com.dimagi.applicationutility;
+
+import java.io.IOException;
+
+import org.testng.Reporter;
+
+import com.dimagi.locators.Locators;
+import com.dimagi.utility.ExcelUtility;
+import com.dimagi.utility.FunctionUtility;
+import com.relevantcodes.extentreports.LogStatus;
+
+import junit.framework.Assert;
+
+<span class="nc" id="L14">public class AppUtility extends FunctionUtility {</span>
+
+	public static void login(String user, String pass, String logStep) throws Exception {
+
+		try {
+
+<span class="fc" id="L20">			FunctionUtility.inputData(&quot;xpath&quot;, Locators.USERNAME, user, &quot;Username entered &quot;);</span>
+<span class="fc" id="L21">			Thread.sleep(3000);</span>
+
+<span class="fc" id="L23">			FunctionUtility.inputData(&quot;xpath&quot;, Locators.PASSWORD, pass, &quot;Password entered &quot;);</span>
+<span class="fc" id="L24">			Thread.sleep(3000);</span>
+
+<span class="fc" id="L26">			FunctionUtility.clickOnElement(&quot;xpath&quot;, Locators.SIGN_IN, &quot;Click on Signin Button&quot;);</span>
+<span class="fc" id="L27">			Thread.sleep(3000);</span>
+
+<span class="nc" id="L29">			Assert.assertEquals(&quot;ICDS-CAS Dashboard&quot;, getText(&quot;xpath&quot;, Locators.LOGIN_ASSERT));</span>
+
+<span class="pc" id="L31">		} catch (Exception e) {</span>
+
+<span class="fc" id="L33">			imagePathRelative = testFailTakeScreenshot();</span>
+
+<span class="fc" id="L35">			logger.log(LogStatus.FAIL, failStringRedColor(&quot;Test Case Failure Reason :- &quot;) + &quot;\n&quot; + e);</span>
+
+<span class="fc" id="L37">			pathForLogger = logger.addScreenCapture(imagePathRelative);</span>
+
+<span class="fc" id="L39">			logger.log(LogStatus.FAIL, failStringRedColor(logStep + &quot; in the Application :-&quot; + pathForLogger));</span>
+
+<span class="fc" id="L41">			logger.log(LogStatus.INFO, failStringRedColor(logStep + &quot; -- Test Case Failed.&quot;));</span>
+
+<span class="fc" id="L43">			exceptionMsg = e.getMessage();</span>
+<span class="fc" id="L44">			throw e;</span>
+		}
+
+<span class="nc" id="L47">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

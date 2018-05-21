@@ -407,6 +407,7 @@ public class FunctionUtility  {
 			element = By.id(locator_Path);
 			return element;
 
+			
 		case "className":
 			element = By.className(locator_Path);
 			return element;

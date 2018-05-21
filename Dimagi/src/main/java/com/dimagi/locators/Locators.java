@@ -6,7 +6,6 @@ package com.dimagi.locators;
  *
  */
 
-
 public class Locators {
 
 	/**

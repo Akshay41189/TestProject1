@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ExcelUtility.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.utility</a> &gt; <span class="el_source">ExcelUtility.java</span></div><h1>ExcelUtility.java</h1><pre class="source lang-java linenums">package com.dimagi.utility;
+
+import static org.testng.Assert.fail;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.Column;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.testng.Reporter;
+
+
+/**
+ * ExcelUtility class
+ * @author Deeksha Sethi
+ *
+ */
+<span class="nc" id="L27">public class ExcelUtility {</span>
+	
+	/** The no TC. */
+	static int rowIdx, sheetIdx, noTC;
+
+	/** The excel data. */
+	static String excel_Data;
+	
+	/** The i file. */
+	static FileInputStream iFile;
+	
+	/** The workbook. */
+	static Workbook workbook;
+	
+	/** The i sheet. */
+	static Sheet iSheet;
+	
+	/** The o cell. */
+	static Cell oCell;
+	
+	/** The o col. */
+	static Column oCol;
+	
+	/** The o row. */
+	static Row oRow;
+	
+	/** The cell number. */
+<span class="fc" id="L54">	protected static int cellNumber = 0;</span>
+
+	/** The o file. */
+<span class="fc" id="L57">	private static OutputStream oFile;</span>
+
+	/**
+	 * This function reads data from an Excel file. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param fPath        - Specify the path of the Excel File. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param sheetName    - Specify the Sheet Name in the Excel file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param iRow         - Specify the Row number from which the data has to be
+	 *            fetched. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param iCol          - Specify the Column number from which the data has to be
+	 *            fetched. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @return String value read from the excel file. &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @exception NullPointerException                If the specified Cell is not found in the Excel file. &lt;br&gt;
+	 *                &lt;br&gt;
+	 * @category Excel Utility Class for Excel
+	 */
+	
+	public static String readFromExcel(String fPath, String sheetName, int iRow, int iCol) {
+
+<span class="fc" id="L86">		excel_Data = null;</span>
+
+		try {
+
+<span class="fc" id="L90">			iFile = new FileInputStream(new File(fPath));</span>
+<span class="fc" id="L91">			String extn = FilenameUtils.getExtension(fPath);</span>
+
+<span class="pc bpc" id="L93" title="5 of 7 branches missed.">			switch (extn.toLowerCase()) {</span>
+			case &quot;xls&quot;:
+<span class="nc" id="L95">				workbook = new HSSFWorkbook(iFile);</span>
+<span class="nc" id="L96">				break;</span>
+			case &quot;xlsx&quot;:
+<span class="fc" id="L98">				workbook = new XSSFWorkbook(iFile);</span>
+<span class="fc" id="L99">				break;</span>
+			default:
+<span class="nc" id="L101">				Reporter.log(&quot;Incorrect Extension - &quot; + extn);</span>
+
+<span class="nc" id="L103">				fail(&quot;Incorrect Extension Provided&quot;);</span>
+			}
+
+<span class="fc" id="L106">			iSheet = workbook.getSheet(sheetName);</span>
+<span class="fc" id="L107">			oRow = iSheet.getRow(iRow - 1);</span>
+<span class="fc" id="L108">			excel_Data = oRow.getCell(iCol - 1).getStringCellValue();</span>
+<span class="fc" id="L109">			Reporter.log(&quot;Data Read from Excel Successfull&quot;);</span>
+
+<span class="pc" id="L111">		} catch (Exception e) {</span>
+
+<span class="nc" id="L113">			System.out.println(e.getMessage());</span>
+<span class="nc" id="L114">			Reporter.log(&quot;Data Read from Excel Failed&quot;);</span>
+
+		}
+<span class="fc" id="L117">		return excel_Data;</span>
+
+	}
+
+	/**
+	 * This function appends data from an Excel file. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param fPath            - Specify the path of the Excel File. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param sheetName            - Specify the Sheet Name in the Excel file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param iRow            - Specify the Row number from which the data has to be
+	 *            fetched. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param iCol            - Specify the Column number from which the data has to be
+	 *            fetched. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @param value            - Specify the value to be appended in the Excel file. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @exception IOException                If the file is not found on the specified location. &lt;br&gt;
+	 *                &lt;br&gt;
+	 * @exception NullPointerException                If the specified Cell is not found in the Excel file. &lt;br&gt;
+	 *                &lt;br&gt;
+	 * @category Excel Utility Class for Excel
+	 */
+	public static void appendInExcel(String fPath, String sheetName, int iRow, int iCol, String value)
+			throws IOException {
+
+<span class="nc" id="L150">		iFile = new FileInputStream(new File(fPath));</span>
+<span class="nc" id="L151">		String extn = FilenameUtils.getExtension(fPath);</span>
+<span class="nc bnc" id="L152" title="All 7 branches missed.">		switch (extn.toLowerCase()) {</span>
+		case &quot;xls&quot;:
+<span class="nc" id="L154">			workbook = new HSSFWorkbook(iFile);</span>
+<span class="nc" id="L155">			break;</span>
+		case &quot;xlsx&quot;:
+<span class="nc" id="L157">			workbook = new XSSFWorkbook(iFile);</span>
+<span class="nc" id="L158">			break;</span>
+		default:
+<span class="nc" id="L160">			fail(&quot;Incorrect extension provided&quot;);</span>
+
+		}
+<span class="nc" id="L163">		iSheet = workbook.getSheet(sheetName);</span>
+
+		try {
+<span class="nc" id="L166">			oRow = iSheet.getRow(iRow - 1);</span>
+<span class="nc" id="L167">			oCell = oRow.getCell(iCol - 1);</span>
+<span class="nc" id="L168">		} catch (NullPointerException e) {</span>
+<span class="nc" id="L169">			oRow = iSheet.createRow(iRow - 1);</span>
+<span class="nc" id="L170">			oCell = oRow.getCell(iCol - 1);</span>
+		}
+
+		try {
+<span class="nc" id="L174">			oCell.setCellValue(value);</span>
+<span class="nc" id="L175">		} catch (NullPointerException e) {</span>
+<span class="nc" id="L176">			oCell = oRow.createCell(iCol - 1);</span>
+<span class="nc" id="L177">			oCell.setCellValue(value);</span>
+		}
+
+		try {
+<span class="nc" id="L181">			oFile = new FileOutputStream(fPath);</span>
+<span class="nc" id="L182">			workbook.write(oFile);</span>
+<span class="nc" id="L183">			oFile.close();</span>
+<span class="nc" id="L184">			Reporter.log(&quot;Data Appended to Excel Successfully&quot;);</span>
+
+<span class="nc" id="L186">		} catch (Exception e) {</span>
+<span class="nc" id="L187">			e.printStackTrace();</span>
+<span class="nc" id="L188">			Reporter.log(&quot;Data Appending to Excel Failed&quot;);</span>
+		}
+<span class="nc" id="L190">	}</span>
+
+	/**
+	 * This function customizes the Excel report (adds description of the test
+	 * case). &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param fPath            - Specify the path of the Excel File. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @exception NullPointerException                If the specified Cell is not found in the Excel file. &lt;br&gt;
+	 *                &lt;br&gt;
+	 * @category Excel Utility Class for Excel
+	 */
+	public static void customizeExcelReport(String fPath) {
+
+<span class="nc" id="L209">		excel_Data = null;</span>
+
+<span class="nc" id="L211">		excel_Data = readFromExcel(</span>
+<span class="nc" id="L212">				System.getProperty(&quot;user.dir&quot;) + PropertiesUtility.readStringFromProperties(&quot;Framework.properties&quot;, &quot;ExcelReportFilePath&quot;)</span>
+<span class="nc" id="L213">						+ PropertiesUtility.readStringFromProperties(&quot;Framework.properties&quot;, &quot;ExcelReportFileName&quot;),</span>
+<span class="nc" id="L214">				&quot;Summary&quot;, 5, 2);</span>
+
+<span class="nc" id="L216">		noTC = Integer.parseInt(excel_Data);</span>
+
+<span class="nc bnc" id="L218" title="All 2 branches missed.">		for (int i = 0; i &lt; noTC; i++) {</span>
+
+			try {
+<span class="nc" id="L221">				iFile = new FileInputStream(new File(fPath));</span>
+<span class="nc" id="L222">				String extn = FilenameUtils.getExtension(fPath);</span>
+
+<span class="nc bnc" id="L224" title="All 7 branches missed.">				switch (extn.toLowerCase()) {</span>
+
+				case &quot;xls&quot;:
+<span class="nc" id="L227">					workbook = new HSSFWorkbook(iFile);</span>
+<span class="nc" id="L228">					break;</span>
+
+				case &quot;xlsx&quot;:
+<span class="nc" id="L231">					workbook = new XSSFWorkbook(iFile);</span>
+<span class="nc" id="L232">					break;</span>
+
+				default:
+<span class="nc" id="L235">					Reporter.log(&quot;Incorrect Extension - &quot; + extn);</span>
+
+<span class="nc" id="L237">					fail(&quot;Incorrect Extension Provided&quot;);</span>
+				}
+
+<span class="nc bnc" id="L240" title="All 2 branches missed.">				for (sheetIdx = 1; sheetIdx &lt; workbook.getNumberOfSheets(); sheetIdx++) {</span>
+
+<span class="nc" id="L242">					iSheet = workbook.getSheet(workbook.getSheetName(sheetIdx));</span>
+
+<span class="nc bnc" id="L244" title="All 2 branches missed.">					for (rowIdx = 1; rowIdx &lt;= iSheet.getLastRowNum(); rowIdx++) {</span>
+
+<span class="nc" id="L246">						oRow = iSheet.getRow(rowIdx);</span>
+<span class="nc" id="L247">						excel_Data = oRow.getCell(0).getStringCellValue();</span>
+
+<span class="nc" id="L249">						excel_Data.toLowerCase();</span>
+
+<span class="nc bnc" id="L251" title="All 2 branches missed.">						if (excel_Data.equalsIgnoreCase(&quot;testClasses.login.openwebsite&quot;)) {</span>
+<span class="nc" id="L252">							excel_Data = &quot;This function opens the Website.&quot;;</span>
+<span class="nc" id="L253">						}</span>
+
+<span class="nc bnc" id="L255" title="All 2 branches missed.">						else if (excel_Data.equalsIgnoreCase(&quot;testClasses.login.usernametest&quot;)) {</span>
+<span class="nc" id="L256">							excel_Data = &quot;This function enters the username.&quot;;</span>
+<span class="nc" id="L257">						}</span>
+
+<span class="nc bnc" id="L259" title="All 2 branches missed.">						else if (excel_Data.equalsIgnoreCase(&quot;testClasses.login.passwordtest&quot;)) {</span>
+<span class="nc" id="L260">							excel_Data = &quot;This function enters password.&quot;;</span>
+<span class="nc" id="L261">						}</span>
+
+<span class="nc bnc" id="L263" title="All 2 branches missed.">						else if (excel_Data.equalsIgnoreCase(&quot;testClasses.login.signinbutton&quot;)) {</span>
+<span class="nc" id="L264">							excel_Data = &quot;This function clicks the Sign In button.&quot;;</span>
+						}
+
+<span class="nc" id="L267">						oCell = oRow.getCell(6);</span>
+<span class="nc" id="L268">						oCell.setCellValue(excel_Data);</span>
+					}
+				}
+
+<span class="nc" id="L272">			} catch (NullPointerException nullex) {</span>
+
+<span class="nc" id="L274">				oCell = oRow.createCell(6);</span>
+<span class="nc" id="L275">				oCell.setCellValue(excel_Data);</span>
+
+<span class="nc" id="L277">			} catch (Exception e) {</span>
+
+<span class="nc" id="L279">				System.out.println(e.getMessage());</span>
+<span class="nc" id="L280">				Reporter.log(&quot;Data Read from Excel Failed&quot;);</span>
+
+			}
+
+			try {
+<span class="nc" id="L285">				oFile = new FileOutputStream(fPath);</span>
+<span class="nc" id="L286">				workbook.write(oFile);</span>
+<span class="nc" id="L287">				oFile.close();</span>
+<span class="nc" id="L288">				Reporter.log(&quot;Data Appended to Excel Successfully&quot;);</span>
+
+<span class="nc" id="L290">			} catch (Exception e) {</span>
+<span class="nc" id="L291">				e.printStackTrace();</span>
+<span class="nc" id="L292">				Reporter.log(&quot;Data Appending to Excel Failed&quot;);</span>
+			}
+		}
+<span class="nc" id="L295">	}</span>
+	
+	
+	/**
+	 * Gets the test data from excel.
+	 *
+	 * @param sheetName the sheet name
+	 * @param rowName the row name
+	 * @param columnName the column name
+	 * @return the test data from excel
+	 */
+	public static String getTestDataFromExcel(String sheetName, String rowName, String columnName) {
+
+<span class="nc" id="L308">		excel_Data = null;</span>
+
+		try {
+
+<span class="nc" id="L312">			iFile = new FileInputStream(new File(System.getProperty(&quot;user.dir&quot;)</span>
+<span class="nc" id="L313">					+ PropertiesUtility.readStringFromProperties(&quot;Framework.properties&quot;, &quot;ExcelInputFilePath&quot;)));</span>
+<span class="nc" id="L314">			String extn = FilenameUtils.getExtension(System.getProperty(&quot;user.dir&quot;)</span>
+<span class="nc" id="L315">					+ PropertiesUtility.readStringFromProperties(&quot;Framework.properties&quot;, &quot;ExcelInputFilePath&quot;));</span>
+
+<span class="nc bnc" id="L317" title="All 7 branches missed.">			switch (extn.toLowerCase()) {</span>
+			case &quot;xls&quot;:
+<span class="nc" id="L319">				workbook = new HSSFWorkbook(iFile);</span>
+<span class="nc" id="L320">				break;</span>
+			case &quot;xlsx&quot;:
+<span class="nc" id="L322">				workbook = new XSSFWorkbook(iFile);</span>
+<span class="nc" id="L323">				break;</span>
+			default:
+<span class="nc" id="L325">				Reporter.log(&quot;Incorrect Extension - &quot; + extn);</span>
+
+<span class="nc" id="L327">				fail(&quot;Incorrect Extension Provided&quot;);</span>
+			}
+
+<span class="nc" id="L330">			iSheet = workbook.getSheet(sheetName);</span>
+<span class="nc" id="L331">			int rowNumber = 0;</span>
+<span class="nc bnc" id="L332" title="All 2 branches missed.">			for (int i = 0; i &lt; iSheet.getLastRowNum(); i++) {</span>
+<span class="nc" id="L333">				 oCell = iSheet.getRow(i).getCell(0);</span>
+<span class="nc" id="L334">				oCell.setCellType(oCell.CELL_TYPE_STRING);</span>
+<span class="nc" id="L335">				String getCellName = oCell.getStringCellValue();</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">				if (getCellName.contains(rowName)) {</span>
+<span class="nc" id="L337">					rowNumber=i;</span>
+<span class="nc" id="L338">					break;</span>
+				}
+			}
+<span class="nc" id="L341">			oRow = iSheet.getRow(rowNumber);</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">			for (int y = 0; y &lt; iSheet.getRow(0).getLastCellNum(); y++) {</span>
+<span class="nc" id="L343">				 oCell = iSheet.getRow(0).getCell(y);</span>
+<span class="nc" id="L344">				oCell.setCellType(oCell.CELL_TYPE_STRING);</span>
+<span class="nc" id="L345">				String getCellName = oCell.getStringCellValue();</span>
+<span class="nc bnc" id="L346" title="All 2 branches missed.">				if (getCellName.contains(columnName)) {</span>
+<span class="nc" id="L347">					cellNumber = oCell.getColumnIndex();</span>
+<span class="nc" id="L348">					break;</span>
+				}
+			}
+<span class="nc bnc" id="L351" title="All 2 branches missed.">			if(oRow.getCell(cellNumber).getCellType()==oRow.getCell(cellNumber).CELL_TYPE_FORMULA){</span>
+<span class="nc" id="L352">				excel_Data = &quot;&quot; + oRow.getCell(cellNumber).getCellFormula();</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">			}else if(oRow.getCell(cellNumber).getCellType()==oRow.getCell(cellNumber).CELL_TYPE_NUMERIC){</span>
+<span class="nc" id="L354">				excel_Data = &quot;&quot; +oRow.getCell(cellNumber).getNumericCellValue();</span>
+<span class="nc" id="L355">			}else{</span>
+<span class="nc" id="L356">				excel_Data = oRow.getCell(cellNumber).getStringCellValue();</span>
+			}
+			
+<span class="nc" id="L359">			Reporter.log(&quot;Data Read from Excel Successfull&quot;);</span>
+
+<span class="nc" id="L361">		} catch (Exception e) {</span>
+
+<span class="nc" id="L363">			System.out.println(e.getMessage());</span>
+<span class="nc" id="L364">			Reporter.log(&quot;Data Read from Excel Failed&quot;);</span>
+
+		}
+<span class="nc" id="L367">		return excel_Data;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

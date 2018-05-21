@@ -52,5 +52,9 @@
 	<classpathentry kind="lib" path="D:/Deeksha_Eclipse/Appium/android/lib/ezmorph-1.0.6.jar"/>
 	<classpathentry kind="lib" path="D:/Deeksha_Eclipse/Appium/android/lib/jaxrpc.jar"/>
 	<classpathentry kind="lib" path="D:/Deeksha_Eclipse/Appium/android/lib/jmock-1.1.0.jar"/>
+	<classpathentry kind="lib" path="D:/Important/Softwares/jacoco-maven-plugin-0.7.9.jar"/>
+	<classpathentry kind="lib" path="D:/Important/Softwares/maven-surefire-plugin-2.5.jar"/>
+	<classpathentry kind="lib" path="D:/Important/Softwares/maven-surefire-report-plugin-2.5.jar"/>
+	<classpathentry kind="lib" path="D:/Important/Softwares/maven-project-info-reports-plugin-2.9.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>DriverUtility.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.utility</a> &gt; <span class="el_source">DriverUtility.java</span></div><h1>DriverUtility.java</h1><pre class="source lang-java linenums">package com.dimagi.utility;
+
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+//import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.*;
+
+/**
+ * &lt;h1&gt;DriverUtility class&lt;/h1&gt; &lt;br&gt;
+ * Utility Class for Driver &lt;br&gt;
+ * &lt;br&gt;
+ * .
+ *
+ * @author Deeksha Sethi
+ * @version 1.0 &lt;br&gt;
+ *          &lt;br&gt;
+ */
+<span class="nc" id="L27">public class DriverUtility  {</span>
+
+	/** The driver. */
+	static WebDriver driver;
+	
+	
+	/**
+	 * This function sets the WebDriver and launches the URL specified in
+	 * Frameowrk.properties file with property key BaseURL. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param browserName
+	 *            - Specify the name of the browser to be launched. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @return the driver
+	 * @exception Exception
+	 *                If incorrect browser name entered. &lt;br&gt;
+	 *                &lt;br&gt;
+	 * @category Driver Utility Class for getting WebDriver
+	 */
+	
+	public static void getDriver(String browserName) throws Exception {
+
+<span class="pc bpc" id="L54" title="2 of 4 branches missed.">		if (browserName.equalsIgnoreCase(&quot;Chrome&quot;) || browserName.equalsIgnoreCase(&quot;Ch&quot;)) {</span>
+
+<span class="fc" id="L56">			System.setProperty(&quot;webdriver.chrome.driver&quot;, System.getProperty(&quot;user.dir&quot;) </span>
+<span class="fc" id="L57">					+ PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;CH_DriverPath32_Bit&quot;));</span>
+
+<span class="fc" id="L59">			driver = new ChromeDriver();</span>
+
+<span class="pc bnc" id="L61" title="All 4 branches missed.">		} else if (browserName.equalsIgnoreCase(&quot;Firefox&quot;) || browserName.equalsIgnoreCase(&quot;Ff&quot;)) {</span>
+
+<span class="nc" id="L63">			System.setProperty(&quot;webdriver.gecko.driver&quot;, System.getProperty(&quot;user.dir&quot;)</span>
+<span class="nc" id="L64">					+ PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;FF_DriverPath64_Bit&quot;));</span>
+
+<span class="nc" id="L66">			driver = new FirefoxDriver();</span>
+
+<span class="nc" id="L68">		}</span>
+
+<span class="nc bnc" id="L70" title="All 4 branches missed.">		else if (browserName.equalsIgnoreCase(&quot;Explorer&quot;) || browserName.equalsIgnoreCase(&quot;IE&quot;)) {</span>
+
+<span class="nc" id="L72">			System.setProperty(&quot;webdriver.ie.driver&quot;, System.getProperty(&quot;user.dir&quot;)</span>
+<span class="nc" id="L73">					+ PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;IE_DriverPath64_Bit&quot;));</span>
+
+<span class="nc" id="L75">			driver = new InternetExplorerDriver();</span>
+
+<span class="nc" id="L77">		} else {</span>
+
+<span class="nc" id="L79">			throw new Exception(&quot;Incorrect Input&quot;);</span>
+
+		}
+
+<span class="fc" id="L83">		System.out.println(System.getProperty(&quot;user.dir&quot;) + PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;BaseURL&quot;));</span>
+<span class="fc" id="L84">		driver.manage().timeouts().pageLoadTimeout(PropertiesUtility.readLongFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;PageLoadTimeOut&quot;),</span>
+<span class="fc" id="L85">				TimeUnit.SECONDS);</span>
+
+<span class="fc" id="L87">		driver.manage().timeouts().implicitlyWait(PropertiesUtility.readIntFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;ImplicitWaitTimeOut&quot;),</span>
+<span class="fc" id="L88">				TimeUnit.SECONDS);</span>
+
+<span class="fc" id="L90">		driver.manage().deleteAllCookies();</span>
+
+		/**
+		 * Reading Application Base URL
+		 * from the Properties file
+		 * 
+		 */
+		
+<span class="fc" id="L98">		driver.get(PropertiesUtility.readStringFromProperties(System.getProperty(&quot;user.dir&quot;) + &quot;\\Resources\\Framework.properties&quot;, &quot;BaseURL&quot;));</span>
+		
+		
+		
+<span class="fc" id="L102">		driver.manage().window().maximize();</span>
+
+<span class="fc" id="L104">	}</span>
+
+	/**
+	 * This function appends data from an Excel file. &lt;br&gt;
+	 * &lt;br&gt;
+	 *
+	 * @author Deeksha Sethi &lt;br&gt;
+	 *         &lt;br&gt;
+	 * @version 1.0 &lt;br&gt;
+	 *          &lt;br&gt;
+	 * @param scrollDriver
+	 *            - The driver which has launched the site. &lt;br&gt;
+	 *            &lt;br&gt;
+	 * @category Utility Class for getting WebDriver
+	 */
+	public static void scrollToBottom(WebDriver scrollDriver) {
+<span class="nc" id="L120">		JavascriptExecutor scroller = (JavascriptExecutor) scrollDriver;</span>
+
+		try {
+<span class="nc" id="L123">			double pos = 0;</span>
+			while (true) {
+<span class="nc" id="L125">				scroller.executeScript(&quot;window.scrollBy(0,755)&quot;);</span>
+<span class="nc" id="L126">				pos += 755;</span>
+				// wait for a second and half before scrolling again
+<span class="nc" id="L128">				Thread.sleep(1500);</span>
+
+<span class="nc bnc" id="L130" title="All 2 branches missed.">				if (pos &gt; Double.parseDouble(scroller.executeScript(&quot;return document.body.scrollHeight;&quot;).toString()))</span>
+					break;
+			}
+<span class="nc" id="L133">		} catch (InterruptedException e) {</span>
+<span class="nc" id="L134">			System.err.println(&quot;Sleep Routine was Interrupted&quot;);</span>
+<span class="nc" id="L135">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L137">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>JiraUtility.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">DeliberateFail (21 May, 2018 4:34:11 PM)</a> &gt; <a href="../../index.html" class="el_group">Dimagi</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.dimagi.utility</a> &gt; <span class="el_source">JiraUtility.java</span></div><h1>JiraUtility.java</h1><pre class="source lang-java linenums">package com.dimagi.utility;
+
+import net.rcarz.jiraclient.BasicCredentials;
+import net.rcarz.jiraclient.JiraClient;
+import net.rcarz.jiraclient.JiraException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import net.rcarz.jiraclient.Issue;
+import com.thed.zephyr.cloud.rest.ZFJCloudRestClient;
+import com.thed.zephyr.cloud.rest.client.JwtGenerator;
+import net.rcarz.jiraclient.Field;
+
+
+public class JiraUtility {
+
+	
+
+<span class="fc" id="L35">	public static String userName = &quot;testingxperts11@gmail.com&quot;;</span>
+<span class="fc" id="L36">	public static String password = &quot;Damco@123&quot;;</span>
+<span class="fc" id="L37">	public static String jiraUrl = &quot;https://testingxpert.atlassian.net&quot;;</span>
+<span class="fc" id="L38">	public static String jiraProject = &quot;TES&quot;;</span>
+<span class="fc" id="L39">	public static String jiraProjectId = &quot;10001&quot;;</span>
+<span class="fc" id="L40">	public static String jiraCycleId = &quot;0001525183887463-242ac112-0001&quot;;</span>
+<span class="fc" id="L41">	public static String versionId = &quot;-1&quot;;</span>
+	/* zephyr accessKey ,Go to settings then Ad-ons then ZAPI */
+<span class="fc" id="L43">	private static String zapiAccessKey = &quot;YmQ2YjBjM2YtMmEwZS0zNGRjLTllYTgtMWEzYmY4Mjg3NGNjIHRlc3Rpbmd4cGVydHMxMSBVU0VSX0RFRkFVTFRfTkFNRQ&quot;;</span>
+	/* zephyr accessKey ,Go to settings then Ad-ons then ZAPI */
+<span class="fc" id="L45">	private static String zapiSecretKey = &quot;_EXll5mjUioRbceX1vqhQBJAKnuLqa7lm-93-wh-a6Y&quot;;</span>
+	/*
+	 * Replace zephyr baseurl &lt;ZAPI_Cloud_URL&gt; shared with the user for ZAPI Cloud
+	 * Installation
+	 */
+<span class="fc" id="L50">	private static String zephyrBaseUrl = &quot;https://prod-api.zephyr4jiracloud.com/connect&quot;;</span>
+	static ZFJCloudRestClient ZAPI_CLIENT;
+<span class="fc" id="L52">	private static String API_UPDATE_EXECUTION = &quot;{SERVER}/public/rest/api/1.0/execution/&quot;;</span>
+<span class="fc" id="L53">	private static String API_GET_EXECUTIONS = &quot;{SERVER}/public/rest/api/1.0/executions/search/cycle/&quot;;</span>
+	static BasicCredentials creds;
+	static JiraClient jira ;
+<span class="fc" id="L56">	static Issue issue;</span>
+
+	/* Constructor for initializing different values */
+<span class="fc" id="L59">	public JiraUtility() {</span>
+<span class="fc" id="L60">	creds = new BasicCredentials(userName, password);</span>
+<span class="fc" id="L61">	jira = new JiraClient(jiraUrl, creds);</span>
+	//ZAPI_CLIENT = ZFJCloudRestClient.restBuilder(zephyrBaseUrl, zapiAccessKey, zapiSecretKey, userName).build();
+<span class="fc" id="L63">	}</span>
+
+	public  String reportIssue(String summary, String description, String attachmentPath) {
+		
+		
+		Issue newIssue;
+<span class="fc" id="L69">		String bugID = &quot;No Bug Created. Please check Configuration&quot;;</span>
+		try {
+			// create a issue
+<span class="fc" id="L72">			System.out.println(jiraProject);</span>
+<span class="fc" id="L73">			newIssue = jira.createIssue(jiraProject, &quot;Bug&quot;).field(Field.SUMMARY, summary)</span>
+<span class="fc" id="L74">					.field(Field.DESCRIPTION, description).field(Field.PRIORITY, &quot;High&quot;).execute();</span>
+
+			// add an attachment to the issue created
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">			if (!attachmentPath.equalsIgnoreCase(&quot;RestAPI&quot;)) {</span>
+<span class="fc" id="L78">				File file = new File(attachmentPath);</span>
+<span class="fc" id="L79">				newIssue.addAttachment(file);</span>
+			}
+<span class="fc" id="L81">			bugID = newIssue.getId();</span>
+<span class="fc" id="L82">			return bugID;</span>
+
+<span class="nc" id="L84">		} catch (JiraException e) {</span>
+<span class="nc" id="L85">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L87">		return bugID;</span>
+
+	}
+
+	/**
+	 * 
+	 * @param ExecutionID:
+	 *            ID is the number which we get when the testcase is added to a
+	 *            Testcycle and do inspect element and in the html serach for
+	 *            &quot;data-issueid&quot;
+	 * @param Comments:
+	 *            String
+	 * @param result
+	 *            : Fail
+	 */
+	public  void updateJiraTestResults(String ExecutionID, String Comments, String Result) throws Exception {
+
+<span class="nc" id="L104">		Map&lt;String, String&gt; executionIds = getExecutionsID();</span>
+		// creating the Rest object to pass through REST API for Updating the test case
+		// Result
+<span class="nc" id="L107">		JSONObject statusObj = new JSONObject();</span>
+<span class="nc" id="L108">		String statusID = &quot;1&quot;;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">		if (Result.equalsIgnoreCase(&quot;Fail&quot;))</span>
+<span class="nc" id="L110">			statusID = &quot;2&quot;;</span>
+<span class="nc" id="L111">		statusObj.put(&quot;id&quot;, statusID);</span>
+<span class="nc" id="L112">		JSONObject executeTestsObj = new JSONObject();</span>
+<span class="nc" id="L113">		executeTestsObj.put(&quot;status&quot;, statusObj);</span>
+<span class="nc" id="L114">		executeTestsObj.put(&quot;cycleId&quot;, jiraCycleId);</span>
+<span class="nc" id="L115">		executeTestsObj.put(&quot;projectId&quot;, jiraProjectId);</span>
+<span class="nc" id="L116">		executeTestsObj.put(&quot;versionId&quot;, versionId);</span>
+<span class="nc" id="L117">		executeTestsObj.put(&quot;comment&quot;, Comments);</span>
+<span class="nc" id="L118">		final String updateExecutionUri = API_UPDATE_EXECUTION.replace(&quot;{SERVER}&quot;, zephyrBaseUrl)</span>
+<span class="nc" id="L119">				+ executionIds.get(ExecutionID);</span>
+<span class="nc" id="L120">		executeTestsObj.put(&quot;issueId&quot;, ExecutionID);</span>
+		StringEntity executeTestsJSON;
+<span class="nc" id="L122">		executeTestsJSON = new StringEntity(executeTestsObj.toString());</span>
+		// call the function to update the result
+<span class="nc" id="L124">		updateExecutions(updateExecutionUri, ZAPI_CLIENT, zapiAccessKey, executeTestsJSON);</span>
+
+<span class="nc" id="L126">	}</span>
+
+	private static Map&lt;String, String&gt; getExecutionsID() {
+<span class="nc" id="L129">		Map&lt;String, String&gt; executionIds = new HashMap&lt;String, String&gt;();</span>
+		try {
+<span class="nc" id="L131">			final String getExecutionsUri = API_GET_EXECUTIONS.replace(&quot;{SERVER}&quot;, zephyrBaseUrl) + jiraCycleId</span>
+<span class="nc" id="L132">					+ &quot;?projectId=&quot; + jiraProjectId + &quot;&amp;versionId=-1&quot;;</span>
+<span class="nc" id="L133">			executionIds = getExecutionsByCycleId(getExecutionsUri, ZAPI_CLIENT, zapiAccessKey);</span>
+<span class="nc" id="L134">		} catch (Exception e) {</span>
+<span class="nc" id="L135">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L137">		return executionIds;</span>
+	}
+
+	private static String updateExecutions(String uriStr, ZFJCloudRestClient client, String accessKey,StringEntity executionJSON)
+	
+	{
+<span class="nc" id="L143">		String executionStatus = &quot;No Test Executed&quot;;</span>
+		try {
+
+<span class="nc" id="L146">			URI uri = new URI(uriStr);</span>
+<span class="nc" id="L147">			int expirationInSec = 360;</span>
+<span class="nc" id="L148">			JwtGenerator jwtGenerator = client.getJwtGenerator();</span>
+<span class="nc" id="L149">			String jwt = jwtGenerator.generateJWT(&quot;PUT&quot;, uri, expirationInSec);</span>
+
+<span class="nc" id="L151">			HttpResponse response=null;</span>
+			
+<span class="nc" id="L153">			HttpClient restClient =new DefaultHttpClient();</span>
+
+<span class="nc" id="L155">			HttpPut executeTest = new HttpPut(uri);</span>
+<span class="nc" id="L156">			executeTest.addHeader(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L157">			executeTest.addHeader(&quot;Authorization&quot;, jwt);</span>
+<span class="nc" id="L158">			executeTest.addHeader(&quot;zapiAccessKey&quot;, accessKey);</span>
+<span class="nc" id="L159">			executeTest.setEntity(executionJSON);</span>
+<span class="nc" id="L160">			response = restClient.execute(executeTest);</span>
+
+			// get the status of the rest
+<span class="nc" id="L163">			int statusCode = response.getStatusLine().getStatusCode();</span>
+<span class="nc" id="L164">			HttpEntity entity = response.getEntity();</span>
+
+<span class="nc bnc" id="L166" title="All 4 branches missed.">			if (statusCode &gt;= 200 &amp;&amp; statusCode &lt; 300) {</span>
+<span class="nc" id="L167">				String string = null;</span>
+				try {
+<span class="nc" id="L169">					string = EntityUtils.toString(entity);</span>
+<span class="nc" id="L170">					JSONObject executionResponseObj = new JSONObject(string);</span>
+<span class="nc" id="L171">					JSONObject descriptionResponseObj = executionResponseObj.getJSONObject(&quot;execution&quot;);</span>
+<span class="nc" id="L172">					JSONObject statusResponseObj = descriptionResponseObj.getJSONObject(&quot;status&quot;);</span>
+<span class="nc" id="L173">					executionStatus = statusResponseObj.getString(&quot;description&quot;);</span>
+<span class="nc" id="L174">					System.out.println(executionResponseObj.get(&quot;issueKey&quot;) + &quot;--&quot; + executionStatus);</span>
+<span class="nc" id="L175">				} catch (Exception e) {</span>
+<span class="nc" id="L176">					e.printStackTrace();</span>
+				}
+
+<span class="nc" id="L179">			} else {</span>
+				try {
+<span class="nc" id="L181">					throw new ClientProtocolException(&quot;Unexpected response status: &quot; + statusCode);</span>
+<span class="nc" id="L182">				} catch (ClientProtocolException e) {</span>
+<span class="nc" id="L183">					e.printStackTrace();</span>
+				}
+			}
+<span class="nc" id="L186">		} catch (Exception e) {</span>
+<span class="nc" id="L187">			e.printStackTrace();</span>
+		}
+<span class="nc" id="L189">		return executionStatus;</span>
+	}
+
+	private static Map&lt;String, String&gt; getExecutionsByCycleId(String uriStr, ZFJCloudRestClient client,
+			String accessKey) throws URISyntaxException, JSONException {
+<span class="nc" id="L194">		Map&lt;String, String&gt; executionIds = new HashMap&lt;String, String&gt;();</span>
+<span class="nc" id="L195">		URI uri = new URI(uriStr);</span>
+<span class="nc" id="L196">		int expirationInSec = 360;</span>
+<span class="nc" id="L197">		JwtGenerator jwtGenerator = client.getJwtGenerator();</span>
+<span class="nc" id="L198">		String jwt = jwtGenerator.generateJWT(&quot;GET&quot;, uri, expirationInSec);</span>
+<span class="nc" id="L199">		System.out.println(uri.toString());</span>
+<span class="nc" id="L200">		 System.out.println(jwt);</span>
+
+<span class="nc" id="L202">		HttpResponse response = null;</span>
+<span class="nc" id="L203">		HttpClient restClient = new DefaultHttpClient();</span>
+<span class="nc" id="L204">		HttpGet httpGet = new HttpGet(uri);</span>
+<span class="nc" id="L205">		httpGet.setHeader(&quot;Authorization&quot;, jwt);</span>
+<span class="nc" id="L206">		httpGet.setHeader(&quot;zapiAccessKey&quot;, accessKey);</span>
+
+		try {
+<span class="nc" id="L209">			response = restClient.execute(httpGet);</span>
+<span class="nc" id="L210">		} catch (ClientProtocolException e1) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L212">			e1.printStackTrace();</span>
+<span class="nc" id="L213">		} catch (IOException e1) {</span>
+			// TODO Auto-generated catch block
+<span class="nc" id="L215">			e1.printStackTrace();</span>
+		}
+
+<span class="nc" id="L218">		int statusCode = response.getStatusLine().getStatusCode();</span>
+		// System.out.println(statusCode);
+
+<span class="nc bnc" id="L221" title="All 4 branches missed.">		if (statusCode &gt;= 200 &amp;&amp; statusCode &lt; 300) {</span>
+<span class="nc" id="L222">			HttpEntity entity1 = response.getEntity();</span>
+<span class="nc" id="L223">			String string1 = null;</span>
+
+			try {
+<span class="nc" id="L226">				string1 = EntityUtils.toString(entity1);</span>
+<span class="nc" id="L227">			} catch (IOException e) {</span>
+<span class="nc" id="L228">				e.printStackTrace();</span>
+			}
+
+			// System.out.println(string1);
+<span class="nc" id="L232">			JSONObject allIssues = new JSONObject(string1);</span>
+<span class="nc" id="L233">			JSONArray IssuesArray = allIssues.getJSONArray(&quot;searchObjectList&quot;);</span>
+			// System.out.println(IssuesArray.length());
+<span class="nc bnc" id="L235" title="All 2 branches missed.">			if (IssuesArray.length() == 0) {</span>
+<span class="nc" id="L236">				return executionIds;</span>
+			}
+<span class="nc bnc" id="L238" title="All 2 branches missed.">			for (int j = 0; j &lt;= IssuesArray.length() - 1; j++) {</span>
+<span class="nc" id="L239">				JSONObject jobj = IssuesArray.getJSONObject(j);</span>
+<span class="nc" id="L240">				JSONObject jobj2 = jobj.getJSONObject(&quot;execution&quot;);</span>
+<span class="nc" id="L241">				String executionId = jobj2.getString(&quot;id&quot;);</span>
+<span class="nc" id="L242">				long IssueId = jobj2.getLong(&quot;issueId&quot;);</span>
+				// executionIds.put(executionId, String.valueOf(IssueId));
+
+<span class="nc" id="L245">				executionIds.put(String.valueOf(IssueId), executionId);</span>
+			}
+		}
+<span class="nc" id="L248">		return executionIds;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span>DeliberateFail (21 May, 2018 4:34:11 PM)</div></body></html>
